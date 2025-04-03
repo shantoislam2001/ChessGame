@@ -1,13 +1,20 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class ServerInteraction : MonoBehaviour
 {
     public static ServerInteraction self;
     public PieceController[] pices;
     public BoxController[] boxes;
+    public BoxCollider2D[] whitePice;
+    public BoxCollider2D[] blackPice;
     public Server server;
+
+    public InputField input;
+    public GameObject game;
+    public GameObject canvas;
 
     private void Awake()
     {
@@ -64,10 +71,56 @@ public class ServerInteraction : MonoBehaviour
         server.sendBox(m);
     }
 
-
-    // Update is called once per frame
-    void Update()
+    
+    public void createRoom()
     {
-        
+        server.CreateRoom(input.text);
     }
+
+    public void joinRoom()
+    {
+        server.JoinRoom(input.text);
+    }
+
+
+
+
+    public void ServerConnectEvent()
+    {
+        UnityMainThreadDispatcher.Enqueue(() =>
+        {
+            canvas.SetActive(true);
+        });
+    }
+
+    public void RoomCreateEvent()
+    {
+        UnityMainThreadDispatcher.Enqueue(() =>
+        {
+            canvas.SetActive(false);
+            game.SetActive(true);
+
+            foreach (var p in blackPice)
+            {
+                p.enabled = false;
+            }
+
+        });
+    }
+
+    public void RoomJoinEvent()
+    {
+        UnityMainThreadDispatcher.Enqueue(() =>
+        {
+            canvas.SetActive(false);
+            game.SetActive(true);
+
+            foreach (var p in whitePice)
+            {
+                p.enabled = false;
+            }
+
+        });
+    }
+
 }

@@ -2,9 +2,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using SocketIOClient;   // https://github.com/itisnajim/SocketIOUnity.git
 using SocketIOClient.Transport;
-using UnityEditor.VersionControl;
+//using UnityEditor.VersionControl;
 //using Unity.VisualScripting;
-using UnityEditor.PackageManager;
+//using UnityEditor.PackageManager;
 
 public class Server : MonoBehaviour
 {
@@ -14,8 +14,8 @@ public class Server : MonoBehaviour
     private void Start()
     {
         
-       // var uri = new System.Uri("https://bubbly-lydian-gopher.glitch.me");
-        var uri = new System.Uri("http://localhost:3000");
+        var uri = new System.Uri("https://bubbly-lydian-gopher.glitch.me");
+       // var uri = new System.Uri("http://localhost:3000");
 
         var options = new SocketIOOptions
         {
@@ -34,6 +34,7 @@ public class Server : MonoBehaviour
         socket.OnConnected += (sender, e) =>
         {
             Debug.Log(" Connected to server");
+            ServerInteraction.self.ServerConnectEvent();
         };
 
 
@@ -42,6 +43,7 @@ public class Server : MonoBehaviour
             string roomName = response.GetValue<string>();
             currentRoom = roomName;
             Debug.Log($"Room {roomName} created and joined");
+            ServerInteraction.self.RoomCreateEvent();
         });
 
 
@@ -50,6 +52,7 @@ public class Server : MonoBehaviour
             string roomName = response.GetValue<string>();
             currentRoom = roomName;
             Debug.Log($"Joined room: {roomName}");
+            ServerInteraction.self.RoomJoinEvent();
         });
 
 
