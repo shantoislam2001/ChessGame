@@ -37,6 +37,33 @@ public class BoxController : MonoBehaviour
         if (GameController.SelectedPiece != null)
         {
             GameController.SelectedPiece.GetComponent<PieceController>().MovePiece(this.transform.position);
+
+
+            for (int i = 0; i < ServerInteraction.self.boxes.Length; i++)
+            {
+                if (ServerInteraction.self.boxes[i] == this)
+                {
+                    ServerInteraction.self.SendBox(i);
+                    break;
+                }
+            }
         }
     }
+
+    public void Click()
+    {
+        if (GameController.SelectedPiece != null && GameController.SelectedPiece.GetComponent<PieceController>().IsMoving() == true)
+        {
+            // Prevent clicks during movement
+            return;
+        }
+
+        if (GameController.SelectedPiece != null)
+        {
+            GameController.SelectedPiece.GetComponent<PieceController>().MovePiece(this.transform.position);
+
+
+        }
+    }
+
 }

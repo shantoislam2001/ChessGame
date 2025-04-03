@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -58,6 +59,15 @@ public class PieceController : MonoBehaviour
             return;
         }
 
+        for(int i = 0; i < ServerInteraction.self.pices.Length; i++)
+        {
+            if(ServerInteraction.self.pices[i] == this)
+            {
+                ServerInteraction.self.SendPice(i);
+                break;
+            }
+         }
+      
         if (GameController.SelectedPiece == this.gameObject)
         {
             GameController.DeselectPiece();
@@ -66,6 +76,7 @@ public class PieceController : MonoBehaviour
         {
             if (GameController.SelectedPiece == null)
             {
+               
                 GameController.SelectPiece(this.gameObject);
             }
             else
@@ -80,6 +91,59 @@ public class PieceController : MonoBehaviour
                 }
             }
         }
+    }
+
+    
+    public void click()
+    {
+        if (GameController.SelectedPiece != null && GameController.SelectedPiece.GetComponent<PieceController>().IsMoving() == true)
+        {
+            // Prevent clicks during movement
+            return;
+        }
+
+      
+
+        if (GameController.SelectedPiece == this.gameObject)
+        {
+            GameController.DeselectPiece();
+        }
+        else
+        {
+            if (GameController.SelectedPiece == null)
+            {
+
+                GameController.SelectPiece(this.gameObject);
+            }
+            else
+            {
+                if (this.tag == GameController.SelectedPiece.tag)
+                {
+                    GameController.SelectPiece(this.gameObject);
+                }
+                else if ((this.tag == "White" && GameController.SelectedPiece.tag == "Black") || (this.tag == "Black" && GameController.SelectedPiece.tag == "White"))
+                {
+                    GameController.SelectedPiece.GetComponent<PieceController>().MovePiece(this.transform.position);
+                }
+            }
+        }
+    }
+
+    void runOnMainThraid()
+    {
+        Debug.Log("excuted");
+        try
+        {
+            GameController.SelectPiece(this.gameObject);
+        }
+        catch (Exception e)
+        {
+            Debug.LogError("MovePiece() Exception: " + e.Message);
+        }
+
+
+
+        Debug.Log("Clicked");
     }
 
     public bool MovePiece(Vector3 newPosition, bool castling = false)
